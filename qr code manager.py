@@ -3,50 +3,52 @@ from PIL import Image
 from pyzbar.pyzbar import decode
 import os
 
-print("Secret Message Encoder/Decoder")
-print("=================================")
+print("Secret Message Encoder/Decoder ")
+print("=" * 35)
 
 while True:
-    print("\n1. Encode a Message")
-    print("2. Decode a Message")
-    print("3. Exit")
+    print("\nChoose an option:")
+    print("1 → Encode a message into QR")
+    print("2 → Decode a QR to read message")
+    print("3 → Exit")
 
     try:
-        choice = int(input("Please enter your choice (1, 2, 3): "))
+        choice = int(input("Your pick (1/2/3): "))
 
         if choice == 1:
-            data = input("Enter the message to encode: ")
-            qr = qrcode.make(data)
-            filename = input("Enter filename to save QR code: ").strip()
+            message = input("Type your secret message: ")
+            qr_image = qrcode.make(message)
+
+            filename = input("Filename to save as (.png auto-added if missing): ").strip()
             name, ext = os.path.splitext(filename)
             if ext.lower() != '.png':
                 filename = name + '.png'
 
-            qr.save(filename)
-            print(f"QR Code saved as '{filename}'. Opening now...")
-            qr.show()
+            qr_image.save(filename)
+            print(f"Saved QR code as '{filename}'. Opening...")
+            qr_image.show()
 
         elif choice == 2:
-            file_path = input("Enter the path to the QR Code image: ").strip().strip('"')
-            name, ext = os.path.splitext(file_path)
+            path = input("Path to QR image file: ").strip().strip('"')
+            name, ext = os.path.splitext(path)
             if ext.lower() != '.png':
-                file_path = name + '.png'
+                path = name + '.png'
 
             try:
-                decoded = decode(Image.open(file_path))
-                if decoded:
-                    print("Decoded message:", decoded[0].data.decode('utf-8'))
+                decoded_data = decode(Image.open(path))
+                if decoded_data:
+                    print("Decoded Message:", decoded_data[0].data.decode('utf-8'))
                 else:
-                    print("No QR code found in the image.")
+                    print("No QR code detected in the image.")
             except FileNotFoundError:
-                print("File not found. Please check the file path.")
+                print("File not found. Double-check the path.")
 
         elif choice == 3:
-            print("Exiting the program.")
+            print("Goodbye! Stay encrypted.")
             break
 
         else:
-            print("Please enter a valid option (1, 2, or 3).")
+            print("Invalid choice. Please enter 1, 2, or 3.")
 
     except ValueError:
-        print("Invalid input! Please enter a number.")
+        print("Error: Please enter a number.")
